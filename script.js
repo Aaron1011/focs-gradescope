@@ -37,7 +37,7 @@
     function injectCalculator(data) {
         var section = $("section");
         var wrapperDiv = $("<div id='focs-grade-calculator-tampermonkey'>")
-        var title = $("<h2><br/><br/>FOCS Grade calculator script</h2></br><h3>Formula: ((0.2 * HW) + (.25 * Exam1) + (.25 * Exam2) + (.30 * FinalExam)) [from https://www.cs.rpi.edu/~pattes3/csci2200/general-info-2019.pdf]</h3><br/>");
+        var title = $("<h2><br/><br/>FOCS Grade calculator script</h2></br><h3>Formula: ((0.2 * HW) + (.25 * Exam1) + (.25 * Exam2) + (.30 * FinalExam)) [from <a href='https://www.cs.rpi.edu/~pattes3/csci2200/general-info-2019.pdf'>https://www.cs.rpi.edu/~pattes3/csci2200/general-info-2019.pdf</a>]</h3><br/>");
 
         var finalGrade = $("<p>");
         var finalGradeLetter = $("<p>");
