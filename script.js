@@ -35,13 +35,26 @@
 
 
     function injectCalculator(data) {
-        var section = $("section");
-        var wrapperDiv = $("<div id='focs-grade-calculator-tampermonkey'>")
-        var title = $("<h2><br/><br/>FOCS Grade calculator script</h2></br><h3>Formula: ((0.2 * HW) + (.25 * Exam1) + (.25 * Exam2) + (.30 * FinalExam)) [from <a href='https://www.cs.rpi.edu/~pattes3/csci2200/general-info-2019.pdf'>https://www.cs.rpi.edu/~pattes3/csci2200/general-info-2019.pdf</a>]</h3><br/>");
+        var section = document.querySelector("section");
+        var wrapperDiv = document.createElement("div");
+        wrapperDiv.setAttribute("id", "focs-grade-calculator-tampermonkey");
+        var title = document.createElement("h2");
 
-        var finalGrade = $("<p>");
-        var finalGradeLetter = $("<p>");
-        wrapperDiv.append(title);
+        // Add two line breaks
+        title.appendChild(document.createElement("br"));
+        title.appendChild(document.createElement("br"));
+
+        title.textContent = "FOCS Grade calculator script";
+
+        title
+
+        var formula = document.createElement("h3");
+        formula.innerHTML = "Formula: ((0.2 * HW) + (.25 * Exam1) + (.25 * Exam2) + (.30 * FinalExam)) [from <a href='https://www.cs.rpi.edu/~pattes3/csci2200/general-info-2019.pdf'>https://www.cs.rpi.edu/~pattes3/csci2200/general-info-2019.pdf</a>]";
+        //var title = $("<h2><br/><br/>FOCS Grade calculator script</h2></br><h3>Formula: ((0.2 * HW) + (.25 * Exam1) + (.25 * Exam2) + (.30 * FinalExam)) [from <a href='https://www.cs.rpi.edu/~pattes3/csci2200/general-info-2019.pdf'>https://www.cs.rpi.edu/~pattes3/csci2200/general-info-2019.pdf</a>]</h3><br/>");
+
+        var finalGrade = document.createElement("p");
+        var finalGradeLetter = document.createElement("p");
+        wrapperDiv.appendChild(title);
 
         var homeworkValues = [];
         var exam1 = data.exam1;
@@ -56,8 +69,8 @@
 
             var homeworkAvg = newHomeworkTotal / (data.numHomeworks + homeworkValues.length);
             var newOverall = calculate(homeworkAvg, exam1, exam2, final);
-            finalGrade.text("Overall score: " + (newOverall.total * 100).toFixed(2));
-            finalGradeLetter.text("Letter grade: " + newOverall.letter);
+            finalGrade.textContent = "Overall score: " + (newOverall.total * 100).toFixed(2);
+            finalGradeLetter.textContent = "Letter grade: " + newOverall.letter;
         }
 
         function onChange(i, score, entry) {
@@ -81,36 +94,44 @@
 
         for (var i = 0; i < data.graded.length; i++) {
             var entry = data.graded[i];
-            var label = $("<label />");
-            label.text(entry.value);
-            wrapperDiv.append(label);
-            wrapperDiv.append($("<br/>"));
+            var label = document.createElement("label");
+            label.textContent = entry.value;
+            wrapperDiv.appendChild(label);
+            wrapperDiv.appendChild(document.createElement("br"));
         }
 
         for (var i = 0; i < data.ungraded.length; i++) {
             (function(i) {
                 var entry = data.ungraded[i];
-                var sliderWrapper = $("<div>", {id: "focs-grade-calculator-tampermonkey-homework-slider-wrapper-" + entry.name});
+                var sliderWrapper = document.createElement("div");
+                sliderWrapper.setAttribute("id", "focs-grade-calculator-tampermonkey-homework-slider-wrapper-" + entry.name);
 
                 var sliderName = "focs-grade-calculator-tampermonkey-homework-slider-" + entry.name;
 
 
-                var sliderLabel = $('<label />', {for: sliderName});
-                sliderLabel.text(entry.name + " percentage:");
-                var sliderVal = $('<input type="text" style="width: 40px"/>');
-                sliderVal.val(entry.default * 100);
+                var sliderLabel = document.createElement("label");
+                sliderLabel.setAttribute("for", sliderName);
+                sliderLabel.textContent = entry.name + " percentage:";
+                var sliderVal = document.createElement("input");
+                sliderVal.setAttribute("type", "text");
+                sliderVal.setAttribute("style", "width: 40px");
+                sliderVal.value = entry.default * 100;
 
-                var slider = $('<input type="range" min="0" max="100" />', {name: sliderName});
-                slider.val(entry.default * 100);
-                slider[0].addEventListener('input', function() {
-                    var score = slider[0].value;
-                    sliderVal.val(score);
+                var slider = document.createElement("input");
+                slider.setAttribute("type", "range");
+                slider.setAttribute("min", "0");
+                slider.setAttribute("max", "100");
+                slider.setAttribute("name", sliderName);
+                slider.value = entry.default * 100;
+                slider.addEventListener('input', function() {
+                    var score = slider.value;
+                    sliderVal.value = score;
                     onChange(i, score, entry);
                 });
 
-                sliderVal[0].addEventListener('input', function() {
-                    var score = sliderVal[0].value;
-                    slider.val(score);
+                sliderVal.addEventListener('input', function() {
+                    var score = sliderVal.value;
+                    slider.value = score;
                     onChange(i, score, entry);
                 })
 
@@ -118,25 +139,25 @@
                     homeworkValues.push(entry.default);
                 }
 
-                sliderWrapper.append(sliderLabel);
-                sliderWrapper.append(sliderVal);
-                sliderWrapper.append(slider);
+                sliderWrapper.appendChild(sliderLabel);
+                sliderWrapper.appendChild(sliderVal);
+                sliderWrapper.appendChild(slider);
 
-                wrapperDiv.append(sliderWrapper);
+                wrapperDiv.appendChild(sliderWrapper);
             })(i);
         }
 
-        wrapperDiv.append(finalGrade);
+        wrapperDiv.appendChild(finalGrade);
         //wrapperDiv.append($("<br/>"));
-        wrapperDiv.append(finalGradeLetter);
-        section.append(wrapperDiv);
+        wrapperDiv.appendChild(finalGradeLetter);
+        section.appendChild(wrapperDiv);
 
         recalculate();
 
        //console.log("Your current overall score: " + total + " with letter grade " + letter);
     }
 
-    var assignments = $("tbody tr");
+    var assignments = document.querySelectorAll("tbody tr");
     var homeworkTotal = 0;
     var numHomeworks = 0;
     var exam1 = -1;
@@ -146,9 +167,10 @@
     var graded = [];
 
     for (var i = 0; i < assignments.length; i++) {
-        var assignment = $(assignments[i]);
-        var name = assignment.find(".table--primaryLink").text();
-        var score = assignment.find(".submissionStatus--score").text();
+        var assignment = assignments[i];
+        var name = assignment.querySelector(".table--primaryLink").textContent;
+        var scoreElem = assignment.querySelector(".submissionStatus--score");
+        var score = (scoreElem ? scoreElem.textContent : "");
         var scoreFrac = "<No Score>";
 
         if (score !== "") {
@@ -208,5 +230,3 @@
 
     injectCalculator(data);
 })();
-
-
