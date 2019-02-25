@@ -23,6 +23,45 @@
         throw new Error("Impossible case reached for percent " + percent);
     }
 
+    function injectCalculator(ungradedEntries) {
+        var section = $("section");
+        var wrapperDiv = $("<div id='focs-grade-calculator-tampermonkey'>")
+        var title = $("<h2><br/><br/>FOCS Grade calculator script</h2>");
+
+        wrapperDiv.append(title);
+
+        for (var i = 0; i < ungradedEntries.length; i++) {
+            (function(i) {
+                var entry = ungradedEntries[i];
+                var sliderWrapper = $("<div>", {id: "focs-grade-calculator-tampermonkey-homework-slider-wrapper-" + entry.name});
+
+                var sliderName = "focs-grade-calculator-tampermonkey-homework-slider-" + entry.name;
+
+
+                var sliderLabel = $('<label />', {for: sliderName});
+                sliderLabel.text(entry.name + " score:");
+                var sliderVal = $('<input type="text" value="80" style="width: 40px"/>');
+
+                var slider = $('<input type="range" min="0" max="100" value="80" />', {name: sliderName});
+                slider[0].addEventListener('input', function() {
+                    sliderVal.val(slider[0].value);
+                });
+
+                sliderVal[0].addEventListener('input', function() {
+                    slider.val(sliderVal[0].value);
+                })
+
+                sliderWrapper.append(sliderLabel);
+                sliderWrapper.append(sliderVal);
+                sliderWrapper.append(slider);
+
+                wrapperDiv.append(sliderWrapper);
+            })(i);
+        }
+
+        section.append(wrapperDiv);
+    }
+
     var assignments = $("tbody tr");
     var homeworkTotal = 0;
     var numHomeworks = 0;
@@ -52,6 +91,12 @@
         console.log("Score: " + scoreFrac);
     }
 
+    var ungraded = [];
+    // There are eight homeworks total
+    for (var j = numHomeworks + 1; j <= 8; j++) {
+        ungraded.push({name: "Homework " + j});
+    }
+
     if (exam2 == -1) {
         console.error("Exam 2 has not been graded! Using exam 1 score of " + exam1 + " for exam 2 score");
         exam2 = exam1;
@@ -66,5 +111,9 @@
     var letter = percentToLetter(total);
     console.log("Your current overall score: " + total + " with letter grade " + letter);
 
+
+    injectCalculator(ungraded);
+
     // Your code here...
 })();
+
