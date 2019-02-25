@@ -97,9 +97,11 @@
 
                 var sliderLabel = $('<label />', {for: sliderName});
                 sliderLabel.text(entry.name + " percentage:");
-                var sliderVal = $('<input type="text" value="80" style="width: 40px"/>');
+                var sliderVal = $('<input type="text" style="width: 40px"/>');
+                sliderVal.val(entry.default * 100);
 
-                var slider = $('<input type="range" min="0" max="100" value="80" />', {name: sliderName});
+                var slider = $('<input type="range" min="0" max="100" />', {name: sliderName});
+                slider.val(entry.default * 100);
                 slider[0].addEventListener('input', function() {
                     var score = slider[0].value;
                     sliderVal.val(score);
@@ -113,7 +115,7 @@
                 })
 
                 if (entry.type == "homework") {
-                    homeworkValues.push(.8);
+                    homeworkValues.push(entry.default);
                 }
 
                 sliderWrapper.append(sliderLabel);
@@ -169,28 +171,30 @@
         console.log("Score: " + scoreFrac);
     }
 
+
     var ungraded = [];
     // There are eight homeworks total
     for (var j = numHomeworks + 1; j <= 8; j++) {
-        ungraded.push({name: "Homework " + j, type: "homework", min: 0, max: 50});
+        ungraded.push({name: "Homework " + j, type: "homework", min: 0, max: 50, default: .80});
     }
 
     if (exam1 == -1) {
         console.error("Exam 1 has not been graded! Using score of 80 for exam 1 score!");
         exam1 = 80;
-        ungraded.push({name: "Exam 1", type: "exam1", min: 0, max: 100});
+        ungraded.push({name: "Exam 1", type: "exam1", min: 0, max: 100, default: exam1});
     }
 
     if (exam2 == -1) {
         console.error("Exam 2 has not been graded! Using exam 1 score of " + exam1 + " for exam 2 score");
-        ungraded.push({name: "Exam 2", type: "exam2", min: 0, max: 100});
         exam2 = exam1;
+        ungraded.push({name: "Exam 2", type: "exam2", min: 0, max: 100, default: exam2});
     }
     if (final == -1) {
         console.error("Final exam has not been graded! Using exam 2 score of " + exam2 + " for final exam score");
-        ungraded.push({name: "Final exam", type: "final", min: 0, max: 100});
         final = exam2;
+        ungraded.push({name: "Final exam", type: "final", min: 0, max: 100, default: final});
     }
+
 
     var data = {
         ungraded: ungraded,
@@ -204,4 +208,5 @@
 
     injectCalculator(data);
 })();
+
 
