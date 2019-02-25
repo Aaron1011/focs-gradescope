@@ -183,7 +183,7 @@
 
     if (exam2 == -1) {
         console.error("Exam 2 has not been graded! Using exam 1 score of " + exam1 + " for exam 2 score");
-        ungraded.push({name: "Exam 1", type: "exam2", min: 0, max: 100});
+        ungraded.push({name: "Exam 2", type: "exam2", min: 0, max: 100});
         exam2 = exam1;
     }
     if (final == -1) {
@@ -202,10 +202,6 @@
         final: final
     }
 
-
-
     injectCalculator(data);
-
-    // Your code here...
 })();
 
