@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         FOCS Grade Calculator
 // @namespace    https://aaron1011.pw
-// @version      0.1.3
+// @version      0.1.4
 // @description  Calculate your FOCS grade on gradescope
 // @author       Aaron1011
 // @match        https://www.gradescope.com/courses/35880
