@@ -91,12 +91,17 @@
             recalculate();
         }
 
-        for (var i = 0; i < data.graded.length; i++) {
+        var gridWrapper = document.createElement("div");
+        gridWrapper.setAttribute("style", "display: grid; grid-template-columns: max-content max-content; grid-auto-flow: column; grid-auto-columns: 2fr;width: 50%;align-items: center;column-gap: 1%;");
+        gridWrapper.style.gridTemplateRows = "repeat(" + Math.max(data.ungraded.length, data.graded.length) + ", 1fr)";
+
+        for (var i = data.graded.length - 1; i >= 0; i--) {
             var entry = data.graded[i];
             var label = document.createElement("label");
             label.textContent = entry.value;
-            wrapperDiv.appendChild(label);
-            wrapperDiv.appendChild(document.createElement("br"));
+            label.style.gridColumn = 1;
+            gridWrapper.appendChild(label);
+            //wrapperDiv.appendChild(document.createElement("br"));
         }
 
         for (var i = 0; i < data.ungraded.length; i++) {
@@ -142,9 +147,13 @@
                 sliderWrapper.appendChild(sliderVal);
                 sliderWrapper.appendChild(slider);
 
-                wrapperDiv.appendChild(sliderWrapper);
+                sliderWrapper.style.gridColumn = 2;
+
+                gridWrapper.appendChild(sliderWrapper);
             })(i);
         }
+
+        wrapperDiv.appendChild(gridWrapper);
 
         wrapperDiv.appendChild(finalGrade);
         wrapperDiv.appendChild(finalGradeLetter);
@@ -226,3 +235,4 @@
 
     injectCalculator(data);
 })();
+
