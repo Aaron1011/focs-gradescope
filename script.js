@@ -46,10 +46,10 @@
 
         title.textContent = "FOCS Grade calculator script";
 
-        title
-
-        var formula = document.createElement("h3");
+        var formula = document.createElement("p");
         formula.innerHTML = "Formula: ((0.2 * HW) + (.25 * Exam1) + (.25 * Exam2) + (.30 * FinalExam)) [from <a href='https://www.cs.rpi.edu/~pattes3/csci2200/general-info-2019.pdf'>https://www.cs.rpi.edu/~pattes3/csci2200/general-info-2019.pdf</a>]";
+
+        title.appendChild(formula);
 
         var finalGrade = document.createElement("p");
         var finalGradeLetter = document.createElement("p");
