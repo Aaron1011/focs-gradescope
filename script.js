@@ -11,13 +11,14 @@
 (function() {
     'use strict';
 
+    var gradeTable = [[93, "A", "lightgreen"], [90, "A⁻", "#90ee907a"], [87, "B⁺", "yellow"], [83, "B", "#fefe496b"], [80, "B⁻", "lightyellow"], [77, "C⁺", "orange"], [73, "C", "#ffa50078"], [70, "C⁻", "red"], [67, "D⁺", "red"], [60, "D", "red"], [0, "F", "red"]];
+
     function percentToLetter(percent) {
         percent = Math.round(percent * 100);
         // Each list item is of the form [minimum score, letter grade]
-        var table = [[93, "A "], [90, "A⁻"], [87, "B⁺"], [83, "B"], [80, "B⁻"], [77, "C⁺"], [73, "C"], [70, "C⁻"], [67, "D⁺"], [60, "D"], [0, "F"]];
-        for (var i = 0; i < table.length; i++) {
-            if (percent >= table[i][0]) {
-                return table[i][1];
+        for (var i = 0; i < gradeTable.length; i++) {
+            if (percent >= gradeTable[i][0]) {
+                return gradeTable[i][1];
             }
         }
         throw new Error("Impossible case reached for percent " + percent);
@@ -95,7 +96,8 @@
         }
 
         var outerFlex = document.createElement("div");
-        outerFlex.style.display = "inline-flex";
+        outerFlex.style.display = "flex";
+        //outerFlex.style.display = "inline-flex";
         //outerFlex.style.width = "50%";
 
         var gridWrapper = document.createElement("div");
@@ -195,6 +197,14 @@
 
         outerFlex.appendChild(gridWrapper);
 
+        var gradePadding = 48;
+        var caretWidth = 30;
+
+        // The upper point of the triangle is the middle of the caret div.
+        // Position the triangle so that the point is directly under
+        // the start of the grade scale.
+        var caretBasePadding = gradePadding - (caretWidth / 2);
+
 
         // https://stackoverflow.com/a/37099785/1290530
         var gradeOutputWrapper = document.createElement("div");
@@ -203,14 +213,49 @@
         gradeOutputWrapper.style.flexDirection = "column";
         gradeOutputWrapper.style.justifyContent = "center";
         gradeOutputWrapper.style.flex = "auto";
-        gradeOutputWrapper.style.paddingLeft = "3em";
         //gradeOutputWrapper.style.alignItems = "center";
 
         finalGradeLetter.style.fontSize = "120px";
+        finalGradeLetter.style.paddingLeft = gradePadding + "px";
+
+
+
+        var gradeScale = document.createElement("div");
+        gradeScale.style.display = "flex";
+        gradeScale.style.width = "40%";
+        gradeScale.style.paddingLeft = gradePadding + "px";
+        finalGrade.style.paddingLeft = gradePadding + "px";
+
+        var start = 100;
+        for (var j = 0; j < gradeTable.length; j++) {
+            var gradeRange = start - gradeTable[j][0];
+            var gradeSection = document.createElement("div");
+            gradeSection.style.backgroundColor = gradeTable[j][2];
+            gradeSection.textContent = gradeTable[j][1];
+            gradeSection.style.flexGrow = gradeRange;
+            gradeSection.style.textAlign = "center";
+            gradeScale.appendChild(gradeSection);
+            start = gradeTable[j][0];
+        }
+
+        var gradeCaret = document.createElement("div");
+        gradeCaret.style.backgroundColor = "blue";
+        gradeCaret.style.clipPath = "polygon(50% 0, 0 100%, 100% 100%)";
+        gradeCaret.style.width = "30px";
+        gradeCaret.style.height = "30px";
+        gradeCaret.style.marginLeft = caretBasePadding + "px";
+
+
+        var gradeScaleWrapper = document.createElement("div");
+        gradeScaleWrapper.appendChild(gradeScale);
+        gradeScaleWrapper.appendChild(gradeCaret);
+
+
 
         //gradeOutputWrapper.appendChild(finalGrade);
         gradeOutputWrapper.appendChild(finalGradeLetter);
         gradeOutputWrapper.appendChild(finalGrade);
+        gradeOutputWrapper.appendChild(gradeScaleWrapper);
 
         outerFlex.appendChild(gradeOutputWrapper);
 
@@ -293,4 +338,5 @@
 
     injectCalculator(data);
 })();
+
 
