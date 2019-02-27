@@ -59,6 +59,7 @@
         var finalGradeLetter = document.createElement("div");
         var gradeCaret = document.createElement("div");
         var gradeScale = document.createElement("div");
+        var gradeCaretSubtext = document.createElement("div");
 
 
         var gradePadding = 48;
@@ -85,12 +86,16 @@
             var homeworkAvg = newHomeworkTotal / (data.numHomeworks + homeworkValues.length);
             var newOverall = calculate(homeworkAvg, exam1, exam2, final);
             finalGrade.textContent = "Overall score: " + (newOverall.total * 100).toFixed(2);
+            gradeCaretSubtext.textContent = (newOverall.total * 100).toFixed(2);
             finalGradeLetter.textContent = newOverall.letter;
             // Subtract the score from 1 - we want higher scores to have smaller offsets
             // since higher grades are to the left on the grade scale
             var caretPosition = (1 - newOverall.total) * gradeScale.clientWidth;
 
-            gradeCaret.style.marginLeft = (caretBasePadding + caretPosition) + "px";
+            var pxMargin = (caretBasePadding + caretPosition) + "px";
+
+            gradeCaretSubtext.style.marginLeft = pxMargin;
+            gradeCaret.style.marginLeft = pxMargin;
         }
 
         function onChange(i, score, entry) {
@@ -229,13 +234,14 @@
         finalGradeLetter.style.paddingLeft = gradePadding + "px";
 
 
-        var actualScaleWidth = 800;
+        var actualScaleWidth = 900;
 
         gradeScale.style.display = "flex";
         //gradeScale.style.width = "40%";
         gradeScale.style.width = actualScaleWidth + "px";
         gradeScale.style.paddingLeft = gradePadding + "px";
         finalGrade.style.paddingLeft = gradePadding + "px";
+
 
         var start = 100;
         for (var j = 0; j < gradeTable.length; j++) {
@@ -261,6 +267,7 @@
         var gradeScaleWrapper = document.createElement("div");
         gradeScaleWrapper.appendChild(gradeScale);
         gradeScaleWrapper.appendChild(gradeCaret);
+        gradeScaleWrapper.appendChild(gradeCaretSubtext);
 
 
 
@@ -350,3 +357,5 @@
 
     injectCalculator(data);
 })();
+
+
