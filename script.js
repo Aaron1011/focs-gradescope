@@ -35,9 +35,12 @@
 
 
     function injectCalculator(data) {
+
         var section = document.querySelector("section");
         var wrapperDiv = document.createElement("div");
+
         wrapperDiv.setAttribute("id", "focs-grade-calculator-tampermonkey");
+        wrapperDiv.style.paddingTop = "20px";
         var title = document.createElement("h2");
 
         // Add two line breaks
@@ -51,7 +54,7 @@
 
         title.appendChild(formula);
 
-        var finalGrade = document.createElement("p");
+        var finalGrade = document.createElement("div");
         var finalGradeLetter = document.createElement("div");
         wrapperDiv.appendChild(title);
 
@@ -92,14 +95,15 @@
         }
 
         var outerFlex = document.createElement("div");
-        outerFlex.style.display = "flex";
-        outerFlex.style.width = "50%";
+        outerFlex.style.display = "inline-flex";
+        //outerFlex.style.width = "50%";
 
         var gridWrapper = document.createElement("div");
         //gridWrapper.setAttribute("style", "display: inline-grid; grid-template-columns: max-content max-content 2% max-content; grid-auto-flow: column; grid-auto-columns: 2fr;align-items: center;column-gap: 1%;");
 
         gridWrapper.style.display = "inline-grid";
         gridWrapper.style.gridTemplateColumns = "repeat(5, auto)";
+        gridWrapper.style.border = "1px solid rgba(31,51,51,0.1)";
         gridWrapper.style.gridAutoFlow = "column";
         //gridWrapper.style.flexGrow = 1;
         gridWrapper.style.alignItems = "center";
@@ -112,7 +116,7 @@
         vertLine.style.gridRow = "1 / end";
         vertLine.style.height = "100%";
         //vertLine.style.width = "5px";
-        vertLine.style.borderLeft = "solid gray";
+        vertLine.style.borderLeft = "1px solid rgba(31,51,51,0.1)";
 
         // Pad on both sides of our left border
         vertLine.style.paddingLeft = "5px";
@@ -130,6 +134,7 @@
             var score = document.createElement("label");
             score.textContent = entry.value;
             score.style.gridColumn = 2;
+            score.style.fontWeight = 'bold';
             //score.style.borderRight = "solid";
 
             gridWrapper.appendChild(label);
@@ -205,6 +210,7 @@
 
         //gradeOutputWrapper.appendChild(finalGrade);
         gradeOutputWrapper.appendChild(finalGradeLetter);
+        gradeOutputWrapper.appendChild(finalGrade);
 
         outerFlex.appendChild(gradeOutputWrapper);
 
