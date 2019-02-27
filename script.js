@@ -14,7 +14,7 @@
     function percentToLetter(percent) {
         percent = Math.round(percent * 100);
         // Each list item is of the form [minimum score, letter grade]
-        var table = [[93, "A "], [90, "A-"], [87, "B+"], [83, "B "], [80, "B-"], [77, "C+"], [73, "C "], [70, "C-"], [67, "D+"], [60, "D "], [0, "F "]];
+        var table = [[93, "A "], [90, "A⁻"], [87, "B⁺"], [83, "B"], [80, "B⁻"], [77, "C⁺"], [73, "C"], [70, "C⁻"], [67, "D⁺"], [60, "D"], [0, "F"]];
         for (var i = 0; i < table.length; i++) {
             if (percent >= table[i][0]) {
                 return table[i][1];
