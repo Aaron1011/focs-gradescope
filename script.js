@@ -11,7 +11,7 @@
 (function() {
     'use strict';
 
-    var gradeTable = [[93, "A", "lightgreen"], [90, "A⁻", "#90ee907a"], [87, "B⁺", "yellow"], [83, "B", "#fefe496b"], [80, "B⁻", "lightyellow"], [77, "C⁺", "orange"], [73, "C", "#ffa50078"], [70, "C⁻", "red"], [67, "D⁺", "red"], [60, "D", "red"], [0, "F", "red"]];
+    var gradeTable = [[92.5, "A", "lightgreen"], [89.5, "A⁻", "#90ee907a"], [86.5, "B⁺", "yellow"], [82.5, "B", "#fefe496b"], [79.5, "B⁻", "lightyellow"], [76.5, "C⁺", "orange"], [72.5, "C", "#ffa50078"], [69.5, "C⁻", "lightpink"], [66.5, "D⁺", "#fc395b"], [59.5, "D", "#c31818"], [0, "F", "#9e1b1b"]];
 
     function percentToLetter(percent) {
         percent = Math.round(percent * 100);
@@ -57,6 +57,18 @@
 
         var finalGrade = document.createElement("div");
         var finalGradeLetter = document.createElement("div");
+        var gradeCaret = document.createElement("div");
+        var gradeScale = document.createElement("div");
+
+
+        var gradePadding = 48;
+        var caretWidth = 30;
+
+        // The upper point of the triangle is the middle of the caret div.
+        // Position the triangle so that the point is directly under
+        // the start of the grade scale.
+        var caretBasePadding = gradePadding - (caretWidth / 2);
+
         wrapperDiv.appendChild(title);
 
         var homeworkValues = [];
@@ -74,6 +86,11 @@
             var newOverall = calculate(homeworkAvg, exam1, exam2, final);
             finalGrade.textContent = "Overall score: " + (newOverall.total * 100).toFixed(2);
             finalGradeLetter.textContent = newOverall.letter;
+            // Subtract the score from 1 - we want higher scores to have smaller offsets
+            // since higher grades are to the left on the grade scale
+            var caretPosition = (1 - newOverall.total) * gradeScale.clientWidth;
+
+            gradeCaret.style.marginLeft = (caretBasePadding + caretPosition) + "px";
         }
 
         function onChange(i, score, entry) {
@@ -197,13 +214,6 @@
 
         outerFlex.appendChild(gridWrapper);
 
-        var gradePadding = 48;
-        var caretWidth = 30;
-
-        // The upper point of the triangle is the middle of the caret div.
-        // Position the triangle so that the point is directly under
-        // the start of the grade scale.
-        var caretBasePadding = gradePadding - (caretWidth / 2);
 
 
         // https://stackoverflow.com/a/37099785/1290530
@@ -219,10 +229,11 @@
         finalGradeLetter.style.paddingLeft = gradePadding + "px";
 
 
+        var actualScaleWidth = 800;
 
-        var gradeScale = document.createElement("div");
         gradeScale.style.display = "flex";
-        gradeScale.style.width = "40%";
+        //gradeScale.style.width = "40%";
+        gradeScale.style.width = actualScaleWidth + "px";
         gradeScale.style.paddingLeft = gradePadding + "px";
         finalGrade.style.paddingLeft = gradePadding + "px";
 
@@ -232,13 +243,14 @@
             var gradeSection = document.createElement("div");
             gradeSection.style.backgroundColor = gradeTable[j][2];
             gradeSection.textContent = gradeTable[j][1];
-            gradeSection.style.flexGrow = gradeRange;
+            gradeSection.style.flexGrow = 0;
+            gradeSection.style.flexShrink = 0;
             gradeSection.style.textAlign = "center";
+            gradeSection.style.flexBasis = /*gradeScale.clientWidth*/ actualScaleWidth * (gradeRange / 100) + "px";
             gradeScale.appendChild(gradeSection);
             start = gradeTable[j][0];
         }
 
-        var gradeCaret = document.createElement("div");
         gradeCaret.style.backgroundColor = "blue";
         gradeCaret.style.clipPath = "polygon(50% 0, 0 100%, 100% 100%)";
         gradeCaret.style.width = "30px";
@@ -338,5 +350,3 @@
 
     injectCalculator(data);
 })();
-
-
