@@ -14,7 +14,7 @@
     function percentToLetter(percent) {
         percent = Math.round(percent * 100);
         // Each list item is of the form [minimum score, letter grade]
-        var table = [[93, "A"], [90, "A-"], [87, "B+"], [83, "B"], [80, "B-"], [77, "C+"], [73, "C"], [70, "C-"], [67, "D+"], [60, "D"], [0, "F"]];
+        var table = [[93, "A "], [90, "A-"], [87, "B+"], [83, "B "], [80, "B-"], [77, "C+"], [73, "C "], [70, "C-"], [67, "D+"], [60, "D "], [0, "F "]];
         for (var i = 0; i < table.length; i++) {
             if (percent >= table[i][0]) {
                 return table[i][1];
@@ -52,7 +52,7 @@
         title.appendChild(formula);
 
         var finalGrade = document.createElement("p");
-        var finalGradeLetter = document.createElement("p");
+        var finalGradeLetter = document.createElement("div");
         wrapperDiv.appendChild(title);
 
         var homeworkValues = [];
@@ -69,7 +69,7 @@
             var homeworkAvg = newHomeworkTotal / (data.numHomeworks + homeworkValues.length);
             var newOverall = calculate(homeworkAvg, exam1, exam2, final);
             finalGrade.textContent = "Overall score: " + (newOverall.total * 100).toFixed(2);
-            finalGradeLetter.textContent = "Letter grade: " + newOverall.letter;
+            finalGradeLetter.textContent = newOverall.letter;
         }
 
         function onChange(i, score, entry) {
@@ -91,16 +91,49 @@
             recalculate();
         }
 
+        var outerFlex = document.createElement("div");
+        outerFlex.style.display = "flex";
+        outerFlex.style.width = "50%";
+
         var gridWrapper = document.createElement("div");
-        gridWrapper.setAttribute("style", "display: grid; grid-template-columns: max-content max-content; grid-auto-flow: column; grid-auto-columns: 2fr;width: 50%;align-items: center;column-gap: 1%;");
+        //gridWrapper.setAttribute("style", "display: inline-grid; grid-template-columns: max-content max-content 2% max-content; grid-auto-flow: column; grid-auto-columns: 2fr;align-items: center;column-gap: 1%;");
+
+        gridWrapper.style.display = "inline-grid";
+        gridWrapper.style.gridTemplateColumns = "repeat(5, auto)";
+        gridWrapper.style.gridAutoFlow = "column";
+        //gridWrapper.style.flexGrow = 1;
+        gridWrapper.style.alignItems = "center";
+        //gridWrapper.style.columnGap = "0.1%";
         gridWrapper.style.gridTemplateRows = "repeat(" + Math.max(data.ungraded.length, data.graded.length) + ", 1fr)";
+
+        var vertLine = document.createElement("div");
+        //vertLine.style.backgroundColor = "black";
+        vertLine.style.gridColumn = 3;
+        vertLine.style.gridRow = "1 / end";
+        vertLine.style.height = "100%";
+        //vertLine.style.width = "5px";
+        vertLine.style.borderLeft = "solid gray";
+
+        // Pad on both sides of our left border
+        vertLine.style.paddingLeft = "5px";
+        vertLine.style.marglinLeft = "5px";
+
+
+        gridWrapper.appendChild(vertLine);
 
         for (var i = data.graded.length - 1; i >= 0; i--) {
             var entry = data.graded[i];
             var label = document.createElement("label");
-            label.textContent = entry.value;
+            label.textContent = entry.name;
             label.style.gridColumn = 1;
+
+            var score = document.createElement("label");
+            score.textContent = entry.value;
+            score.style.gridColumn = 2;
+            //score.style.borderRight = "solid";
+
             gridWrapper.appendChild(label);
+            gridWrapper.append(score);
             //wrapperDiv.appendChild(document.createElement("br"));
         }
 
@@ -109,6 +142,7 @@
                 var entry = data.ungraded[i];
                 var sliderWrapper = document.createElement("div");
                 sliderWrapper.setAttribute("id", "focs-grade-calculator-tampermonkey-homework-slider-wrapper-" + entry.name);
+                sliderWrapper.style.display = "inline-block";
 
                 var sliderName = "focs-grade-calculator-tampermonkey-homework-slider-" + entry.name;
 
@@ -143,20 +177,38 @@
                     homeworkValues.push(entry.default);
                 }
 
-                sliderWrapper.appendChild(sliderLabel);
-                sliderWrapper.appendChild(sliderVal);
-                sliderWrapper.appendChild(slider);
+                sliderLabel.style.gridColumn = 4;
+                slider.style.gridColumn = 5;
+                sliderVal.style.gridColumn = 6;
 
-                sliderWrapper.style.gridColumn = 2;
 
-                gridWrapper.appendChild(sliderWrapper);
+                gridWrapper.appendChild(sliderLabel);
+                gridWrapper.appendChild(slider);
+                gridWrapper.appendChild(sliderVal);
             })(i);
         }
 
-        wrapperDiv.appendChild(gridWrapper);
+        outerFlex.appendChild(gridWrapper);
 
-        wrapperDiv.appendChild(finalGrade);
-        wrapperDiv.appendChild(finalGradeLetter);
+
+        // https://stackoverflow.com/a/37099785/1290530
+        var gradeOutputWrapper = document.createElement("div");
+
+        gradeOutputWrapper.style.display = "flex";
+        gradeOutputWrapper.style.flexDirection = "column";
+        gradeOutputWrapper.style.justifyContent = "center";
+        gradeOutputWrapper.style.flex = "auto";
+        gradeOutputWrapper.style.paddingLeft = "3em";
+        //gradeOutputWrapper.style.alignItems = "center";
+
+        finalGradeLetter.style.fontSize = "120px";
+
+        //gradeOutputWrapper.appendChild(finalGrade);
+        gradeOutputWrapper.appendChild(finalGradeLetter);
+
+        outerFlex.appendChild(gradeOutputWrapper);
+
+        wrapperDiv.appendChild(outerFlex);
         section.appendChild(wrapperDiv);
 
         recalculate();
@@ -184,13 +236,13 @@
             if (name.startsWith("Homework")) {
                 homeworkTotal += scoreFrac;
                 numHomeworks++;
-                graded.push({value: name + " (graded): " + Math.round(scoreFrac * 100)});
+                graded.push({name: name + " (graded):", value: Math.round(scoreFrac * 100)});
             } else if (name.startsWith("Exam 1")) {
                 exam1 = scoreFrac;
-                graded.push({value: "Exam 1: (graded): " + Math.round(scoreFrac * 100)});
+                graded.push({name: "Exam 1: (graded):", value: Math.round(scoreFrac * 100)});
             } else if (name.startsWith("Exam 2")) {
                 exam2 = scoreFrac;
-                graded.push({value: "Exam 2: (graded): " + Math.round(scoreFrac * 100)});
+                graded.push({name: "Exam 2: (graded):", value: Math.round(scoreFrac * 100)});
             }
         }
 
