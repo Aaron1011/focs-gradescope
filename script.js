@@ -77,13 +77,48 @@
         var exam2 = data.exam2;
         var final = data.final;
 
+        function strikeThrough(elem, strike) {
+            if (strike) {
+                elem.style.textDecoration = "line-through";
+                elem.title = "Lowest grade is dropped";
+            } else {
+                elem.style.textDecoration = "";
+                elem.title = "";
+            }
+        }
+
         function recalculate() {
-            var newHomeworkTotal = data.homeworkTotal;
-            for (var i = 0; i < homeworkValues.length; i++) {
-                newHomeworkTotal += homeworkValues[i];
+
+            var minVal = -1;
+            var minEntry = null;
+            var minEntryIndex = -1;
+
+            var allEntries = data.graded.concat(data.ungraded).filter(e => e.type == "homework");
+
+            for (var i = 0; i < allEntries.length; i++) {
+                var entry = allEntries[i];
+                // Clear any previous strikethough
+                strikeThrough(entry.label, false);
+                if (minVal == -1 || entry.value < minVal) {
+                    minVal = entry.value;
+                    minEntry = entry;
+                    minEntryIndex = i;
+                }
             }
 
-            var homeworkAvg = newHomeworkTotal / (data.numHomeworks + homeworkValues.length);
+            strikeThrough(minEntry.label, true);
+
+            var newHomeworkTotal = 0;
+
+            for (var i = 0; i < allEntries.length; i++) {
+                if (i == minEntryIndex) {
+                    continue;
+                }
+                newHomeworkTotal += allEntries[i].value;
+            }
+
+            // Subtract one from the total because we dropped one homework
+            var homeworkAvg = newHomeworkTotal / (data.numHomeworks + homeworkValues.length - 1);
             var newOverall = calculate(homeworkAvg, exam1, exam2, final);
             finalGrade.textContent = "Overall score: " + (newOverall.total * 100).toFixed(2);
             gradeCaretSubtext.textContent = (newOverall.total * 100).toFixed(2);
@@ -106,6 +141,7 @@
 
             if (entry.type === "homework") {
                 homeworkValues[i] = normalizedScore;
+                data.ungraded[i].value = normalizedScore;
             } else if (entry.type == "exam1") {
                 exam1 = normalizedScore;
             } else if (entry.type == "exam2") {
@@ -156,13 +192,17 @@
             label.style.gridColumn = 1;
 
             var score = document.createElement("label");
-            score.textContent = entry.value;
+            score.textContent = Math.round(entry.value * 100);
             score.style.gridColumn = 2;
             score.style.fontWeight = 'bold';
             //score.style.borderRight = "solid";
 
+
             gridWrapper.appendChild(label);
             gridWrapper.append(score);
+
+
+            entry.label = label;
             //wrapperDiv.appendChild(document.createElement("br"));
         }
 
@@ -210,6 +250,7 @@
                 slider.style.gridColumn = 5;
                 sliderVal.style.gridColumn = 6;
 
+                entry.label = sliderLabel;
 
                 gridWrapper.appendChild(sliderLabel);
                 gridWrapper.appendChild(slider);
@@ -306,13 +347,13 @@
             if (name.startsWith("Homework")) {
                 homeworkTotal += scoreFrac;
                 numHomeworks++;
-                graded.push({name: name + " (graded):", value: Math.round(scoreFrac * 100)});
+                graded.push({name: name + " (graded):", type: "homework", value: scoreFrac});
             } else if (name.startsWith("Exam 1")) {
                 exam1 = scoreFrac;
-                graded.push({name: "Exam 1: (graded):", value: Math.round(scoreFrac * 100)});
+                graded.push({name: "Exam 1: (graded):", value: scoreFrac});
             } else if (name.startsWith("Exam 2")) {
                 exam2 = scoreFrac;
-                graded.push({name: "Exam 2: (graded):", value: Math.round(scoreFrac * 100)});
+                graded.push({name: "Exam 2: (graded):", value: scoreFrac});
             }
         }
 
@@ -324,7 +365,7 @@
     var ungraded = [];
     // There are eight homeworks total
     for (var j = numHomeworks + 1; j <= 8; j++) {
-        ungraded.push({name: "Homework " + j, type: "homework", min: 0, max: 50, default: .80});
+        ungraded.push({name: "Homework " + j, type: "homework", min: 0, max: 50, default: .80, value: .80});
     }
 
     if (exam1 == -1) {
@@ -348,7 +389,6 @@
     var data = {
         ungraded: ungraded,
         graded: graded,
-        homeworkTotal: homeworkTotal,
         numHomeworks: numHomeworks,
         exam1: exam1,
         exam2: exam2,
