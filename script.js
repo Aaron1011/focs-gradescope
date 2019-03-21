@@ -11,7 +11,7 @@
 (function() {
     'use strict';
 
-    var gradeTable = [[92.5, "A", "lightgreen"], [89.5, "A⁻", "#90ee907a"], [86.5, "B⁺", "yellow"], [82.5, "B", "#fefe496b"], [79.5, "B⁻", "lightyellow"], [76.5, "C⁺", "orange"], [72.5, "C", "#ffa50078"], [69.5, "C⁻", "lightpink"], [66.5, "D⁺", "#fc395b"], [59.5, "D", "#c31818"], [0, "F", "#9e1b1b"]];
+    var gradeTable = [[92.5, "A", "lightgreen"], [89.5, "A⁻", "#90ee907a"], [86.5, "B⁺", "yellow"], [82.5, "B", "#fefe496b"], [79.5, "B⁻", "lightyellow"], [76.5, "C⁺", "orange"], [72.5, "C", "#ffa50078"], [69.5, "C⁻", "lightpink"], [66.5, "D⁺", "#ffced6"], [59.5, "D", "#ff9b9b"], [0, "F", "#ff0202"]];
 
     function percentToLetter(percent) {
         percent = Math.round(percent * 100);
